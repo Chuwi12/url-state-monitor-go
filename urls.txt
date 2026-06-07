@@ -1,0 +1,10 @@
+https://www.google.com
+https://www.github.com
+https://www.wikipedia.org
+https://httpbin.org/status/200
+https://httpbin.org/status/404
+https://invalid-domain-example-that-does-not-exist.com
+https://www.microsoft.com
+https://www.apple.com
+https://www.cloudflare.com
+https://www.mozilla.org
