@@ -17,28 +17,28 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	var urlList []string
 
-	fmt.Println("Programa para ver si estan activas las url")
+	fmt.Println("Program to check if URLs are active")
 	fmt.Println("Type a file name:")
 	fileName, err := reader.ReadString('\n')
 
-	// Limpiar la url
+	// Clean the URL
 	fileName = strings.TrimSpace(fileName)
 
-	// Saber si ha dado erro
+	// Check if an error occurred
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}
 
-	// Split the file to a list of urls
-	urlList = strings.Split(proccessFile(fileName), "\n")
+	// Split the file to a list of URLs
+	urlList = strings.Split(processFile(fileName), "\n")
 
 	// Call function to print the result
-	impressResult(urlList)
+	printResults(urlList)
 
 }
 
-// Function to proccess the file
-func proccessFile(fileName string) string {
+// Function to process the file
+func processFile(fileName string) string {
 	data, err := os.ReadFile(fileName)
 
 	// If there is an error return empty
@@ -46,30 +46,30 @@ func proccessFile(fileName string) string {
 		return ""
 	}
 
-	// Return data convert to string
+	// Return data converted to string
 	return string(data)
 }
 
-// Function to validate the url
-func validateUrl(url string) bool {
+// Function to validate the URL
+func validateURL(url string) bool {
 
-	// Create a http cliente with five seconds of life
+	// Create an HTTP client with five seconds of timeout
 	var httpClient = &http.Client{
 		Timeout: 5 * time.Second,
 	}
 
-	// Hacer la peticion get a la url
+	// Make the GET request to the URL
 	response, err := httpClient.Get(url)
 
-	// Validar si ha dado error
+	// Check if an error occurred
 	if err != nil {
 		return false
 	}
 
-	// Cerrar la peticion
+	// Close the response body
 	defer response.Body.Close()
 
-	// Validar si la respuesta es 200
+	// Check if the response status is 200 OK
 	if response.StatusCode == 200 {
 		return true
 	} else {
@@ -79,7 +79,7 @@ func validateUrl(url string) bool {
 }
 
 // Function to print the result
-func impressResult(urlList []string) {
+func printResults(urlList []string) {
 
 	// Create a wait group
 	var wg sync.WaitGroup
@@ -99,14 +99,14 @@ func impressResult(urlList []string) {
 			// Substract one for the group when the goroutine finishes
 			defer wg.Done()
 
-			// Validate the url
-			exist := validateUrl(url)
+			// Validate the URL
+			exist := validateURL(url)
 
-			// Print the resault
+			// Print the result
 			if exist {
-				fmt.Println("El sitio " + url + " esta activo")
+				fmt.Println("The site " + url + " is active")
 			} else {
-				fmt.Println("El sitio " + url + " no existe o no esta activo")
+				fmt.Println("The site " + url + " does not exist or is not active")
 			}
 		}(url)
 	}
