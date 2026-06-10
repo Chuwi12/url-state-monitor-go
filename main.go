@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,27 +13,43 @@ import (
 func main() {
 
 	// Variables declared
-	var fileName string
-	reader := bufio.NewReader(os.Stdin)
+
 	var urlList []string
+	file := flag.String("file", "", "Local path of the file")
+	singleURL := flag.String("url", "", "Single URL to check")
 
-	fmt.Println("Program to check if URLs are active")
-	fmt.Println("Type a file name:")
-	fileName, err := reader.ReadString('\n')
+	// parse all command-line flags.
+	flag.Parse()
 
-	// Clean the URL
-	fileName = strings.TrimSpace(fileName)
-
-	// Check if an error occurred
-	if err != nil {
-		fmt.Println("Error: ", err)
+	// Check if both flags are empty
+	if *file == "" && *singleURL == "" {
+		fmt.Println("Error: No file or URL provided")
+		flag.Usage()
+		os.Exit(1)
 	}
 
-	// Split the file to a list of URLs
-	urlList = strings.Split(processFile(fileName), "\n")
+	// Check if both have data
+	if *file != "" && *singleURL != "" {
+		fmt.Println("Error: Both file and URL provided")
+		flag.Usage()
+		os.Exit(1)
+	}
 
-	// Call function to print the result
-	printResults(urlList)
+	fmt.Println("Program to check if URLs are active")
+
+	if *file != "" {
+		// Split the file to a list of URLs
+		urlList = strings.Split(processFile(*file), "\n")
+
+		// Call function to print the result
+		printResults(urlList)
+
+	} else {
+		// Add single url to list
+		urlList = append(urlList, *singleURL)
+		// Call function to print the result
+		printResults(urlList)
+	}
 
 }
 
